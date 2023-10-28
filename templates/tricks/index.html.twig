@@ -4,32 +4,24 @@
 
 {% block body %}
 <section class="tricks">
+{% for trick in tricks %}
 <article>
-<h2>Tricks 1</h2>
-<p>Nullam quis risus eget <a href="#">urna mollis ornare</a> vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
-<p><small>This line of text is meant to be treated as fine print.</small></p>
-<p>The following is <strong>rendered as bold text</strong>.</p>
-<p>The following is <em>rendered as italicized text</em>.</p>
-<p>An abbreviation of the word attribute is <abbr title="attribute">attr</abbr>.</p>
-<a href="{{ path('app_tricks_show')}}">Voir plus</a>
+<div class="card mb-3"> 
+  <svg xmlns={{ trick.image}} class="d-block user-select-none" width="100%" height="200" aria-label="Placeholder: Image cap" focusable="false" role="img" preserveAspectRatio="xMidYMid slice" viewBox="0 0 318 180" style="font-size:1.125rem;text-anchor:middle">
+    <rect width="100%" height="100%" fill="#868e96"></rect>
+    <text x="50%" y="50%" fill="#dee2e6" dy=".3em"></text>
+  </svg>
+   <div class="card-body">
+    <h5 class="card-title">{{ trick.title}}</h5>
+  </div>
+  </ul>
+  <div class="card-body">
+    <a href="{{ path('app_tricks_show')}}" class="card-link">Voir plus</a>
+    <a href="#" class="card-link">Another link</a>
+  </div>
+</div>
 </article>
-<article>
-<h2>Tricks 2</h2>
-<p>Nullam quis risus eget <a href="#">urna mollis ornare</a> vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
-<p><small>This line of text is meant to be treated as fine print.</small></p>
-<p>The following is <strong>rendered as bold text</strong>.</p>
-<p>The following is <em>rendered as italicized text</em>.</p>
-<p>An abbreviation of the word attribute is <abbr title="attribute">attr</abbr>.</p>
-<a href="{{ path('app_tricks_show')}}">Voir plus</a>
-</article>
-<article>
-<h2>Tricks 3</h2>
-<p>Nullam quis risus eget <a href="#">urna mollis ornare</a> vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
-<p><small>This line of text is meant to be treated as fine print.</small></p>
-<p>The following is <strong>rendered as bold text</strong>.</p>
-<p>The following is <em>rendered as italicized text</em>.</p>
-<p>An abbreviation of the word attribute is <abbr title="attribute">attr</abbr>.</p>
-<a href="{{ path('app_tricks_show')}}">Voir plus</a>
-</article>
+
+{% endfor %}
 </section>
 {% endblock %}
