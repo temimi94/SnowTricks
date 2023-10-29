@@ -1,27 +1,20 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello TricksController!{% endblock %}
-
 {% block body %}
-<section class="tricks">
-{% for trick in tricks %}
-<article>
-<div class="card mb-3"> 
-  <svg xmlns={{ trick.image}} class="d-block user-select-none" width="100%" height="200" aria-label="Placeholder: Image cap" focusable="false" role="img" preserveAspectRatio="xMidYMid slice" viewBox="0 0 318 180" style="font-size:1.125rem;text-anchor:middle">
-    <rect width="100%" height="100%" fill="#868e96"></rect>
-    <text x="50%" y="50%" fill="#dee2e6" dy=".3em"></text>
-  </svg>
-   <div class="card-body">
-    <h5 class="card-title">{{ trick.title}}</h5>
-  </div>
-  </ul>
-  <div class="card-body">
-    <a href="{{ path('app_tricks_show')}}" class="card-link">Voir plus</a>
-    <a href="#" class="card-link">Another link</a>
-  </div>
-</div>
-</article>
-
-{% endfor %}
-</section>
-{% endblock %}
+	<section class="tricks">
+		{% for trick in tricks %}
+			<article class="py-5">
+				<div class="row gx-5">
+					<div class="col-lg-4 mb-5">
+						<div class="card h-100 shadow border-0">
+							<img class="card-img-top" src={{ trick.image }} alt="..."/>
+							<div class="card-body p-4">
+								<a class="text-decoration-none link-dark stretched-link" href="{{ path('app_tricks_show', {'id': trick.id})}}">
+									<h5 class="card-title mb-3">{{ trick.title}}</h5>
+								</a>
+							</div>
+						</div>
+					</article>
+				{% endfor %}
+			</section>
+		{% endblock %}

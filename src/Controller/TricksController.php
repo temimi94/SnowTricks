@@ -25,10 +25,10 @@ class TricksController extends AbstractController
   }
 
   #[Route('tricks/{id}', name: 'app_tricks_show')]
-  public function show( TricksRepository $repo, $id): Response
+  public function show(TricksRepository $repo, $id): Response
   {
     
-    $trick = $repo->findOne($id);
+    $trick = $repo->find($id);
     return $this->render('tricks/show.html.twig', [
       'trick' => $trick
     ]);

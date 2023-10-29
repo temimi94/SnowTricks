@@ -21,7 +21,7 @@ class Tricks
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $groupe_trick = null;
+    private ?string $groupeTrick = null;
 
     #[ORM\Column(length: 255)]
     private ?string $image = null;
@@ -30,7 +30,7 @@ class Tricks
     private ?string $video = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $created_at = null;
+    private ?\DateTimeInterface $createdAt = null;
 
     public function getId(): ?int
     {
@@ -63,12 +63,12 @@ class Tricks
 
     public function getGroupeTrick(): ?string
     {
-        return $this->groupe_trick;
+        return $this->groupeTrick;
     }
 
-    public function setGroupeTrick(string $groupe_trick): static
+    public function setGroupeTrick(string $groupeTrick): static
     {
-        $this->groupe_trick = $groupe_trick;
+        $this->groupeTrick = $groupeTrick;
 
         return $this;
     }
@@ -99,12 +99,12 @@ class Tricks
 
     public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->created_at;
+        return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeInterface $created_at): static
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
-        $this->created_at = $created_at;
+        $this->createdAt = $createdAt;
 
         return $this;
     }
