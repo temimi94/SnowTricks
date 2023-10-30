@@ -1,7 +1,11 @@
 {% extends 'base.html.twig' %}
 {% form_theme formTrick 'bootstrap_4_layout.html.twig' %}
 {% block title %}
-	Créer une figure
+	{% if editMode %}
+		Modifier la figure
+	{% else %}
+		Créer une figure
+	{% endif %}
 {% endblock %}
 
 {% block body %}
@@ -13,12 +17,17 @@
 	{{ form_row(formTrick.image)}}
 	{{ form_row(formTrick.video)}}
 
-
-	{{ form_end(formTrick) }}
-
 	<!-- Submit Button-->
 	<div class="d-grid">
-		<button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">Ajouter la figure</button>
+		<button class="btn btn-primary btn-lg disabled" id="submitButton" type="submit">
+			{% if editMode %}
+				Enregistrer
+			{% else %}
+				Ajouter la figure
+			{% endif %}
+		</button>
 	</div>
+	{{ form_end(formTrick) }}
+
 
 {% endblock %}
