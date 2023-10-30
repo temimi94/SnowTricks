@@ -27,6 +27,7 @@ class TricksController extends AbstractController
   }
   #[Route("/tricks/{id}/edit", name: "app_tricks_edit")]
   #[Route("/tricks/new", name: "app_tricks_new")]
+ 
 
   public function form(Tricks $trick = null, Request $request, EntityManagerInterface  $manager): Response
   {

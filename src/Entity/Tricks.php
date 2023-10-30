@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\TricksRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TricksRepository::class)]
 class Tricks
@@ -12,21 +13,36 @@ class Tricks
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    
+   
     private ?int $id = null;
 
+    #[Assert\Length(
+        min: 10,
+        max: 255,
+        minMessage: 'Votre titre doit comporter au moins 10 caractères',
+        maxMessage: 'Votre titre ne peut pas contenir plus de 255 caractères',
+    )]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\Length(
+        min: 20,
+        minMessage: 'Votre message ne peut pas contenir moin de 20 caractères',
+    )]
     private ?string $content = null;
 
     #[ORM\Column(length: 255)]
     private ?string $groupeTrick = null;
 
+    
     #[ORM\Column(length: 255)]
+    #[Assert\Url]
     private ?string $image = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Url]
     private ?string $video = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
