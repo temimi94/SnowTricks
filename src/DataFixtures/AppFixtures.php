@@ -14,14 +14,14 @@ class AppFixtures extends Fixture
 
     public function __construct()
     {
-        $this->faker = Factory::create();
+        $this->faker = Factory::create('fr_FR');
     }
     public function load(ObjectManager $manager): void
     {
 
         for ($i = 0; $i < 20; $i++) {
             $trick = new Tricks();
-            $trick->setTitle($this->faker->word(4))
+            $trick->setTitle($this->faker->word(6))
                 ->setContent($this->faker->text)
                 ->setImage($this->faker->imageUrl(360, 360, 'sports'))
                 ->setVideo("https://youtu.be/mBB7CznvSPQ")

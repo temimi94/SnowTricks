@@ -35,42 +35,59 @@ class TricksController extends AbstractController
     ]);
   }
 
-
-  /* Afficher créer et modifier une figure */
-  #[
-    Route("/tricks/new", name: "app_tricks_new"),
-    Route("/tricks/{id}/update", name: "app_tricks_update")
-  ]
-
-  public function formTrick(Tricks $trick = null, Request $request, EntityManagerInterface  $manager): Response
+  /* Créer une figure */
+  #[Route("/tricks/new", name: "app_tricks_new")]
+  public function new(Request $request, EntityManagerInterface  $manager): Response
   {
-    if (!$trick) {
-      $trick = new Tricks();
-    }
 
+    $trick = new Tricks();
     $form = $this->createForm(TrickType::class, $trick);
 
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
-      if (!$trick->getId()) {
-        $trick->setCreatedAt(new \DateTimeImmutable());
-      }
-
+      $trick = $form->getData();
       $manager->persist($trick);
       $manager->flush();
+      $this->addFlash(
+        'success',
+        'Votre figure à bien été crée avec succès !'
+      );
       return $this->redirectToRoute('app_tricks');
     }
+    return  $this->render('tricks/create.html.twig', [
+      'formTrick' => $form->createView()
+    ]);
+  }
 
-    return  $this->render(
-      'tricks/create.html.twig',
+
+  /* Modifier une figure */
+  #[Route("tricks/edit/{id}", name: "app_tricks_update")]
+  public function update(TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
+  {
+    $trick = $repo->findOneBy(['id' => $id]);
+    $form = $this->createForm(TrickType::class, $trick);
+    
+    $form->handleRequest($request);
+dump($trick);
+    if ($form->isSubmitted() && $form->isValid()) {
+      $trick = $form->getData();
+      $manager->persist($trick);
+      $manager->flush();
+      $this->addFlash(
+        'success',
+        'Votre figure à bien été modifiée avec succès !'
+      );
+      return $this->redirectToRoute('app_tricks');
+    }
+    return $this->render(
+      'tricks/update.html.twig',
       [
-        'formTrick' => $form->createView(),
-        'editMode' => $trick->getId() !== null
-
+        'form' => $form->createView()
       ]
     );
   }
+
 
   /* Afficher une figure par son id*/
 
@@ -83,4 +100,33 @@ class TricksController extends AbstractController
       'trick' => $trick
     ]);
   }
+
+
+
+
+
+  /* Supprimer une figure */
+  #[Route('/tricks/delete/{id}', name: 'app_tricks_delete')]
+  public function delete(EntityManagerInterface $manager, Tricks $trick): Response 
+  {
+    if(!$trick) {
+      $this->addFlash(
+        'success',
+        'La figue ,n/existe pas  !'
+      );
+
+    }
+     $manager->remove($trick);
+     $manager->flush();
+
+     $this->addFlash(
+      'success',
+      'Votre figure à bien été supprimé avec succès !'
+    );
+     return $this->redirectToRoute('app_tricks');
+
+  }
 }
+
+
+
