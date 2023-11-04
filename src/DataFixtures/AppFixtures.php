@@ -20,22 +20,7 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
 
-        // tricks
-        for ($i = 0; $i < 20; $i++) {
-            $trick = new Tricks();
-            $trick->setTitle($this->faker->word(6))
-                ->setContent($this->faker->text)
-                ->setImage($this->faker->imageUrl(360, 360, 'sports'))
-                ->setVideo("https://youtu.be/mBB7CznvSPQ")
-                ->setGroupeTrick('sport');
-
-
-            $manager->persist($trick);
-        }
-
         //category
-
-       
         $groupTrick = ['La manière de rider', 'Les grabs', 'Les rotations', 'Les flips', 'Les rotations désaxées', 'Les slides', 'Les one foot tricks', 'Old school'];
         for ($i = 0; $i < count($groupTrick); ++$i) {
             $category = new Category();
@@ -43,6 +28,21 @@ class AppFixtures extends Fixture
             $category->setName($title);
             $manager->persist($category);
         }
+
+
+        // tricks
+        for ($m = 0; $m < 20; $m++) {
+            $trick = new Tricks();
+            $trick->setTitle($this->faker->word(6))
+                ->setContent($this->faker->text)
+                ->setImage($this->faker->imageUrl(360, 360, 'sports'))
+                ->setVideo("https://youtu.be/mBB7CznvSPQ");
+            for ($c = 0; $c < 7; $c++) {
+                $trick->addCategory($category);
+            }
+            $manager->persist($trick);
+        }
+
         $manager->flush();
     }
 }

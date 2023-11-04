@@ -3,18 +3,27 @@
 namespace App\Entity;
 
 use App\Repository\TricksRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
+#[UniqueEntity('title')]
+#[orm\HasLifecycleCallbacks]
 #[ORM\Entity(repositoryClass: TricksRepository::class)]
+
+
 class Tricks
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-    
-   
+
+
+
     private ?int $id = null;
 
     #[Assert\Length(
@@ -25,7 +34,7 @@ class Tricks
     )]
     #[ORM\Column(length: 255)]
     private ?string $title = null;
-    
+
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(
@@ -34,10 +43,10 @@ class Tricks
     )]
     private ?string $content = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $groupeTrick = null;
+    #[ORM\ManyToMany(targetEntity: Category::class)]
+    private $category;
 
-    
+
     #[ORM\Column(length: 255)]
     #[Assert\Url]
     private ?string $image = null;
@@ -47,12 +56,25 @@ class Tricks
     private ?string $video = null;
 
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
+    private ?\DateTimeImmutable $updatedAt;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt;
+
+
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
+        $this->updatedAt = new \DateTimeImmutable();
+        $this->category = new ArrayCollection();
+    }
+
+    #[ORM\PrePersist]
+    public function setUpdatedAtvalue()
+    {
+        $this->updatedAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -84,17 +106,21 @@ class Tricks
         return $this;
     }
 
-    public function getGroupeTrick(): ?string
+    public function getCategory(): Collection
     {
-        return $this->groupeTrick;
+        return $this->category;
     }
 
-    public function setGroupeTrick(string $groupeTrick): static
+
+    public function addCategory(Category $categories): static
     {
-        $this->groupeTrick = $groupeTrick;
+        if (!$this->category->contains($categories)) {
+            $this->category[] = $categories;
+        }
 
         return $this;
     }
+
 
     public function getImage(): ?string
     {
@@ -130,5 +156,9 @@ class Tricks
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
     }
 }

@@ -1,33 +1,57 @@
 {% extends 'base.html.twig' %}
 {% form_theme formTrick 'bootstrap_4_layout.html.twig' %}
 {% block title %}
-	Ajouter une figure
+	Créer une figure
 {% endblock %}
 
 {% block body %}
 
 
+	{{ form_start(formTrick) }}
+
+	<div class="form-group">
+		{{ form_label(formTrick.title)}}
+		{{ form_widget(formTrick.title)}}
+		<div class='form-error'>
+			 {{ form_errors(formTrick.title) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(formTrick.content)}}
+		{{ form_widget(formTrick.content)}}
+		<div class='form-error'>
+			{{  form_errors(formTrick.content) }}
+		</div>
+	</div>
+
+	<div class="form-group">
 	
-			{{ form_start(formTrick) }}
+		{{ form_row(formTrick.category)}}
+		<div class='form-error'>
+			 {{ form_errors(formTrick.category) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+
+		{{ form_label(formTrick.image)}}
+		{{ form_widget(formTrick.image)}}
+		<div class='form-error'>
+			 {{ form_errors(formTrick.image) }}
+		</div>
+	</div>
+
+	<div class="form-group">
+		{{ form_label(formTrick.video)}}
+		{{ form_widget(formTrick.video)}}
+		<div class='form-error'>
+		{{ form_errors(formTrick.video) }}
+		</div>
+	</div>
+
+	
+	{{ form_end(formTrick) }}
 
 
-			{{ form_row(formTrick.title)}}
-			{{ form_row(formTrick.content)}}
-			{{ form_row(formTrick.groupeTrick)}}
-			{{ form_row(formTrick.image)}}
-			{{ form_row(formTrick.video)}}
-
-			<!-- Submit Button-->
-			<div class="d-grid">
-				<button class="btn btn-primary btn-lg" id="submitButton" type="submit">Enregistrer
-					{# {% if editMode %}
-									Enregistrer
-								{% else %}
-									Ajouter la figure
-								{% endif %} #}
-				</button>
-			</div>
-			{{ form_end(formTrick) }}
-
-
-		{% endblock %}
+{% endblock %}
