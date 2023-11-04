@@ -1,13 +1,26 @@
 {% extends 'base.html.twig' %}
+
 {% block body %}
-<article>
-<h2>Tricks 2</h2>
-<p>Nullam quis risus eget <a href="#">urna mollis ornare</a> vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
-<p><small>This line of text is meant to be treated as fine print.</small></p>
-<p>The following is <strong>rendered as bold text</strong>.</p>
-<p>The following is <em>rendered as italicized text</em>.</p>
-<p>An abbreviation of the word attribute is <abbr title="attribute">attr</abbr>.</p>
-
-</article>
-
-{% endblock %}
+	{% block title %}
+		{{ trick.title }}
+	{% endblock %}
+	<div
+		class="col-lg-9">
+		<!-- Post content-->
+		<article>
+			<figure class="mb-4"><img class="img-fluid rounded" src={{ trick.image}} width="250" height="200" alt="..."/></figure>
+			{# <embed type="video/webm" src={{ trick.video}} width="250" height="200" /> #}
+			<!-- Post content-->
+			<section class="mb-5">
+				<p class="fs-5 mb-4">{{ trick.content }}</p>
+				<div>
+					<ul>
+						<li>{{ trick.category }}</li>
+						<li>{{ trick.createdAt | date('d/m/Y') }}
+							à
+							{{ trick.createdAt | date('H:i') }}</li>
+					</ul>
+				</div>
+			</section>
+		</article>
+		{% endblock %}
