@@ -17,13 +17,14 @@ class TricksController extends AbstractController
 {
 
 
-  /* Afficher toutes les figures */
+ /** 
+  * Afficher toutes les figures
+  * */
   #[Route('/', name: 'app_tricks')]
   public function index(TricksRepository $repo, PaginatorInterface $paginator, Request $request): Response
   {
 
     $tricks = $repo->findAll();
-
     $tricks = $paginator->paginate(
       $repo->findAll(),
       $request->query->getInt('page', 1),
@@ -35,7 +36,9 @@ class TricksController extends AbstractController
     ]);
   }
 
-  /* Créer une figure */
+/** 
+  * Créer une figure 
+  * */
   #[Route("/tricks/new", name: "app_tricks_new")]
   public function new(Request $request, EntityManagerInterface  $manager): Response
   {
@@ -60,16 +63,16 @@ class TricksController extends AbstractController
     ]);
   }
 
-
-  /* Modifier une figure */
+  /** 
+  * Modifier une figure 
+  * */
   #[Route("tricks/edit/{id}", name: "app_tricks_update")]
   public function update(TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
   {
     $trick = $repo->findOneBy(['id' => $id]);
     $form = $this->createForm(TrickType::class, $trick);
-    
+
     $form->handleRequest($request);
-dump($trick);
     if ($form->isSubmitted() && $form->isValid()) {
       $trick = $form->getData();
       $manager->persist($trick);
@@ -89,7 +92,9 @@ dump($trick);
   }
 
 
-  /* Afficher une figure par son id*/
+  /** 
+  * Afficher une figure par son Id
+  * */
 
   #[Route('/tricks/{id}', name: 'app_tricks_show')]
   public function show(TricksRepository $repo, $id): Response
@@ -98,35 +103,32 @@ dump($trick);
     $trick = $repo->find($id);
     return $this->render('tricks/show.html.twig', [
       'trick' => $trick
+
     ]);
   }
 
 
 
-
-
-  /* Supprimer une figure */
+  /** 
+  * Supprimer une figure 
+  * */
   #[Route('/tricks/delete/{id}', name: 'app_tricks_delete')]
-  public function delete(EntityManagerInterface $manager, Tricks $trick): Response 
+  public function delete(EntityManagerInterface $manager, Tricks $trick): Response
   {
-    if(!$trick) {
+    dump($trick);
+    if (!$trick) {
       $this->addFlash(
         'success',
         'La figue ,n/existe pas  !'
       );
-
     }
-     $manager->remove($trick);
-     $manager->flush();
+    $manager->remove($trick);
+    $manager->flush();
 
-     $this->addFlash(
+    $this->addFlash(
       'success',
       'Votre figure à bien été supprimé avec succès !'
     );
-     return $this->redirectToRoute('app_tricks');
-
+    return $this->redirectToRoute('app_tricks');
   }
 }
-
-
-

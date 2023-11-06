@@ -70,6 +70,7 @@ class Tricks
         $this->updatedAt = new \DateTimeImmutable();
         $this->category = new ArrayCollection();
     }
+    
 
     #[ORM\PrePersist]
     public function setUpdatedAtvalue()

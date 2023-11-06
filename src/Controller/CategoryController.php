@@ -16,7 +16,8 @@ class CategoryController extends AbstractController
         $category = $repo->findAll();
         return $this->render('category/index.html.twig', [
             'controller_name' => 'CategoryController',
-            'category' => $category
+            'category' => $category,
+            dd($category)
         ]);
     }
 }

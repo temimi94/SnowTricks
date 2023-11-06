@@ -8,19 +8,18 @@
 		class="col-lg-9">
 		<!-- Post content-->
 		<article>
-			<figure class="mb-4"><img class="img-fluid rounded" src={{ trick.image}} width="250" height="200" alt="..."/></figure>
-			{# <embed type="video/webm" src={{ trick.video}} width="250" height="200" /> #}
-			<!-- Post content-->
-			<section class="mb-5">
-				<p class="fs-5 mb-4">{{ trick.content }}</p>
-				<div>
-					<ul>
-						<li>{{ trick.category }}</li>
-						<li>{{ trick.createdAt | date('d/m/Y') }}
-							à
-							{{ trick.createdAt | date('H:i') }}</li>
-					</ul>
-				</div>
-			</section>
-		</article>
-		{% endblock %}
+			<figure class="mb-4"><img class="img-fluid rounded" src={{ trick.image}} width="250" height="200" alt="..."/></figure<sectionclass="mb-5">
+			<p class="fs-5 mb-4">{{ trick.content }}</p>
+			<div>
+				<ul>
+				{#  {% for category in category.element.name %}
+					<li>{{ trick.category }}</li>
+					 {% enfor %} #}
+					<li>{{ trick.createdAt | date('d/m/Y') }}
+						à
+						{{ trick.createdAt | date('H:i') }}</li>
+				</ul>
+			</div>
+		</section>
+	</article>
+{% endblock %}

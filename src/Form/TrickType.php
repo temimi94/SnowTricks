@@ -43,9 +43,11 @@ class TrickType extends AbstractType
                 [
                     'class' => Category::class,
                     'query_builder' => function (CategoryRepository $t) {
-                        return $t->createQueryBuilder('c');
-                    },
+                        return $t->createQueryBuilder('c')
+                        ->orderBy('c.name', 'ASC');
 
+                    },
+                    'placeholder' => 'Choisir le groupe',
                     'label' => 'Groupe',
                     'label_attr' => [
                         'class' => 'form-label mt-4'
