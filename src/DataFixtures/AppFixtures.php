@@ -60,13 +60,8 @@ class AppFixtures extends Fixture
             ->setEmail($this->faker->email())
             ->setPassword("password")
             ->setAvatar($this->faker->imageUrl())
-            ->setEnabled("");
-
-        $hasher = $this->hashePassword->hashPassword(
-            $user,
-            "password"
-        );
-        $user->setPassword($hasher);
+            ->setEnabled("")
+            ->setResetToken("password");
 
             $manager->persist($user);
         }

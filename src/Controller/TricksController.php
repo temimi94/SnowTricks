@@ -115,7 +115,6 @@ class TricksController extends AbstractController
   #[Route('/tricks/delete/{id}', name: 'app_tricks_delete')]
   public function delete(EntityManagerInterface $manager, Tricks $trick): Response
   {
-    dump($trick);
     if (!$trick) {
       $this->addFlash(
         'success',
