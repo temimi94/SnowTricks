@@ -41,17 +41,7 @@ class SecurityController extends AbstractController
     #[Route('/connexion', name: 'app_security_login')]
     public function login()
     {
-        if ($this->getUser()) {
-              return $this->redirectToRoute('app_tricks');
-            }
         return $this->render('security/login.html.twig');
     }
 
-
-
-    #[Route('/deconnexion', name: 'app_security.logout')]
-    public function logout(): void
-    {
-        throw new \LogicException();
-    }
 }

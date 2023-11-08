@@ -5,7 +5,6 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -23,7 +22,6 @@ class User implements PasswordAuthenticatedUserInterface
     #[Assert\Email()]
     private ?string $email = null;
 
-
     /**
      * @var string The hashed password
      */
@@ -40,6 +38,7 @@ class User implements PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $enabled = null;
+    
 
    
     private ?string $reset_token = null;
@@ -68,12 +67,14 @@ class User implements PasswordAuthenticatedUserInterface
     /**
      * A visual identifier that represents this user.
      *
-     * @see UserInterface
+     * UserInterface
+     * 
+     * 
      */
-    public function getUserIdentifier(): string
+     public function getUserIdentifier(): string
     {
         return (string) $this->email;
-    }
+    } 
 
 
     public function __construct()
@@ -98,13 +99,13 @@ class User implements PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @see UserInterface
+     * UserInterface
      */
     public function eraseCredentials(): void
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
-    }
+    } 
 
     public function getUsername(): ?string
     {
