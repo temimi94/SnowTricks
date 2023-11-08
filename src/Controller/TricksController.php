@@ -28,7 +28,7 @@ class TricksController extends AbstractController
     $tricks = $paginator->paginate(
       $repo->findAll(),
       $request->query->getInt('page', 1),
-      10
+      15
     );
     return $this->render('tricks/index.html.twig', [
       'controller_name' => 'TricksController',

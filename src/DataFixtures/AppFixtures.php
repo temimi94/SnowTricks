@@ -40,7 +40,7 @@ class AppFixtures extends Fixture
 
 
     // tricks
-        for ($m = 0; $m < 20; $m++) {
+        for ($m = 0; $m < 30; $m++) {
             $trick = new Tricks();
             $trick->setTitle($this->faker->word(6))
                 ->setContent($this->faker->text)
