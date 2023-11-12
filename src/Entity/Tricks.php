@@ -43,9 +43,6 @@ class Tricks
     )]
     private ?string $content = null;
 
-    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Category::class)]
-    private $category;
-
 
     #[ORM\Column(length: 255)]
     #[Assert\Url]
@@ -65,13 +62,16 @@ class Tricks
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
+    #[ORM\ManyToOne(inversedBy: 'tricks')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Categorie $categorie = null;
+
 
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
-        $this->category = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }
     
@@ -107,21 +107,6 @@ class Tricks
     public function setContent(string $content): static
     {
         $this->content = $content;
-
-        return $this;
-    }
-
-    public function getCategory(): Collection
-    {
-        return $this->category;
-    }
-
-
-    public function addCategory(Category $categories): static
-    {
-        if (!$this->category->contains($categories)) {
-            $this->category[] = $categories;
-        }
 
         return $this;
     }
@@ -193,6 +178,18 @@ class Tricks
                 $comment->setTrick(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categorie $categorie): static
+    {
+        $this->categorie = $categorie;
 
         return $this;
     }

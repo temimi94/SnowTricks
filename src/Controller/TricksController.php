@@ -46,13 +46,14 @@ class TricksController extends AbstractController
   {
 
     $trick = new Tricks();
+   
     $form = $this->createForm(TrickType::class, $trick);
-
+   
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
       $trick = $form->getData();
-      dd($trick);
+  
       $manager->persist($trick);
       $manager->flush();
       $this->addFlash(
@@ -69,30 +70,33 @@ class TricksController extends AbstractController
   /** 
    * Modifier une figure 
    * */
-  #[Route("tricks/edit/{id}", name: "app_tricks_update")]
-  public function update(TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
-  {
-    $trick = $repo->findOneBy(['id' => $id]);
-    $form = $this->createForm(TrickType::class, $trick);
+   /* Modifier une figure */
+   #[Route("tricks/edit/{id}", name: "app_tricks_update")]
+   public function update(TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
+   {
+     $trick = $repo->findOneBy(['id' => $id]);
+     $form = $this->createForm(TrickType::class, $trick);
+     
+     $form->handleRequest($request);
 
-    $form->handleRequest($request);
-    if ($form->isSubmitted() && $form->isValid()) {
-      $trick = $form->getData();
-      $manager->persist($trick);
-      $manager->flush();
-      $this->addFlash(
-        'success',
-        'Votre figure à bien été modifiée avec succès !'
-      );
-      return $this->redirectToRoute('app_tricks');
-    }
-    return $this->render(
-      'tricks/update.html.twig',
-      [
-        'form' => $form->createView()
-      ]
-    );
-  }
+     if ($form->isSubmitted() && $form->isValid()) {
+       $trick = $form->getData();
+       $manager->persist($trick);
+       $manager->flush();
+       $this->addFlash(
+         'success',
+         'Votre figure à bien été modifiée avec succès !'
+       );
+       return $this->redirectToRoute('app_tricks');
+     }
+     return $this->render(
+       'tricks/update.html.twig',
+       [
+         'formEdit' => $form->createView()
+       ]
+     );
+   }
+ 
 
 
   /** 

@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Categorie;
 use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Tricks;
@@ -33,29 +34,27 @@ class AppFixtures extends Fixture
         });
         
         for ($i = 0; $i < count($filteredCollection); ++$i) {
-            $category = new Category();
+            $category = new Categorie();
             $title  = $filteredCollection[$i];
-            $category->setName($title);
+            $category->setTitle($title);
             $manager->persist($category);
         
 
 
     // tricks
-        for ($m = 0; $m < 30; $m++) {
+        for ($m = 0; $m <= mt_rand(4, 6); $m++) {
             $trick = new Tricks();
             $trick->setTitle($this->faker->word(6))
                 ->setContent($this->faker->paragraphs(5, true))
                 ->setImage($this->faker->imageUrl())
-                ->setVideo("https://youtu.be/mBB7CznvSPQ");
-             for ($c = 0; $c < 7; $c++) {
-                $trick->addCategory($category);
-            } 
+                ->setVideo("https://youtu.be/mBB7CznvSPQ")
+                ->setCategorie($category);
+         
             $manager->persist($trick);
         }
     }
 
-
-        //user
+       //user
        for ($u=0; $u < 10 ; $u++) { 
             $user = new User();
             $user->setUsername($this->faker->name())
