@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Groupe trick{% endblock %}
+
+{% block body %}
+<duv class="category">
+{% for groupeTrick in category %}
+<ul>
+<li>{{ groupeTrick.name }}</li>
+</ul>
+ {% endfor %}
+</div>
+{% endblock %}

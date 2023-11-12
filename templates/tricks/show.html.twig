@@ -1,13 +1,60 @@
 {% extends 'base.html.twig' %}
-{% block body %}
-<article>
-<h2>Tricks 2</h2>
-<p>Nullam quis risus eget <a href="#">urna mollis ornare</a> vel eu leo. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Nullam id dolor id nibh ultricies vehicula.</p>
-<p><small>This line of text is meant to be treated as fine print.</small></p>
-<p>The following is <strong>rendered as bold text</strong>.</p>
-<p>The following is <em>rendered as italicized text</em>.</p>
-<p>An abbreviation of the word attribute is <abbr title="attribute">attr</abbr>.</p>
-
-</article>
-
+{% block title %}
+	{{ trick.title }}
 {% endblock %}
+{% block body %}
+
+	<div class="show-card " style="display: flex; flex-direction: row; flex-wrap: wrap; ">
+		<img src={{ trick.image}} alt={{ trick.image}} class="img-thumbnail shadow" style="width: 250px; height: 200px; margin: 10px;">
+		<div class="embed-responsive embed-responsive-16by9">
+			<iframe style="margin-top: 10px" width="250" height="200" src="https://www.youtube.com/embed/P-HnC7Ej9mw" title={{ trick.title}} frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+		</div>
+	</div>
+
+	<div class="content-card" style="margin-top: 50px">
+		<p class="text align ">{{ trick.content }}</p>
+		<p></p>
+	</div>
+
+	<div class="detail-card">
+		<ul class="list-group" style="width: 70%;margin-bottom: 50px; display:flex; flex-direction: row; justify-content: space-evenly; flex-wrap: wrap">
+			<li class="list-group-item">Publié le
+				{{ trick.createdAt | date('d/m/Y') }}
+				à
+				{{ trick.createdAt | date('H:i') }}</li>
+			<li class="list-group-item">Modifié le
+				{{ trick.updatedAt | date('d/m/Y') }}
+				à
+				{{ trick.updatedAt | date('H:i') }}</li>
+			<li class="list-group-item">category</li>
+		</ul>
+	</div>
+
+	<section>
+		<div class="card bg-light">
+		
+			<div
+				class="card-body">
+				{% for comment in trick.comments %}
+				<!-- Comment with nested comments-->
+				<div
+					class="d-flex mb-4">
+					<!-- Parent comment-->
+					<div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/></div>
+					<div class="ms-3">
+						<div class="fw-bold">{{comment.author}}</div>
+						{{comment.content}}
+
+					</div>
+				</div>
+				{% endfor %}
+				{{ form_start(comment) }}
+				{{ form_row(comment.author, {'attr': {'placeholder': "Entrer votre nom"}})}}
+				{{ form_row(comment.content, {'attr': {'placeholder': "Entrer votre nom"}})}}
+				  <button  type="submit" class="btn btn-outline-secondary shadow mt-4 mb-4 ">Commenter</button>
+				 {{ form_end(comment) }}
+			</div>
+		</section>
+
+
+	{% endblock %}
