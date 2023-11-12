@@ -6,52 +6,64 @@
 
 {% block body %}
 
+	<h4 style="text-align: center; margin-top: 50px">Veuillez renseigner tous les informations concernant votre nouvelle figure!
+	</br>
+	c'est à vous 💁
+</h4>
+{{ form_start(formTrick) }}
 
-	{{ form_start(formTrick) }}
-
-	<div class="form-group">
-		{{ form_label(formTrick.title)}}
-		{{ form_widget(formTrick.title)}}
-		<div class='form-error'>
-			 {{ form_errors(formTrick.title) }}
-		</div>
+<div class="form-group col-md-6 mx-auto">
+	{{ form_label(formTrick.title)}}
+	{{ form_widget(formTrick.title)}}
+	<div class='form-error'>
+		{{ form_errors(formTrick.title) }}
 	</div>
+</div>
 
-	<div class="form-group">
-		{{ form_label(formTrick.content)}}
-		{{ form_widget(formTrick.content)}}
-		<div class='form-error'>
-			{{  form_errors(formTrick.content) }}
-		</div>
+<div class="form-group col-md-6 mx-auto">
+	{{ form_label(formTrick.content)}}
+	{{ form_widget(formTrick.content)}}
+	<div class='form-error'>
+		{{  form_errors(formTrick.content) }}
 	</div>
+</div>
 
-	<div class="form-group">
-	
-		{{ form_row(formTrick.category)}}
-		<div class='form-error'>
-			 {{ form_errors(formTrick.category) }}
-		</div>
+<div class="form-group col-md-6 mx-auto">
+
+	{{ form_row(formTrick.category)}}
+	<div class='form-error'>
+		{{ form_errors(formTrick.category) }}
 	</div>
+</div>
 
-	<div class="form-group">
+<div class="form-row">
+	<div class="form-group col-md-6 mx-auto">
 
 		{{ form_label(formTrick.image)}}
 		{{ form_widget(formTrick.image)}}
 		<div class='form-error'>
-			 {{ form_errors(formTrick.image) }}
+			{{ form_errors(formTrick.image) }}
 		</div>
 	</div>
 
-	<div class="form-group">
-		{{ form_label(formTrick.video)}}
-		{{ form_widget(formTrick.video)}}
-		<div class='form-error'>
+	<div class="form-group col-md-6 mx-auto">
+		<label for="exampleFormControlFile1">Parcourir</label>
+		<input type="file" class="form-control-file" id="exampleFormControlFile1">
+	</div>
+</div>
+<div class="form-group col-md-6 mx-auto">
+
+	{{ form_label(formTrick.video)}}
+	{{ form_widget(formTrick.video)}}
+	<div class='form-error'>
 		{{ form_errors(formTrick.video) }}
-		</div>
 	</div>
+</div>
+<div class="form-group col-md-6 mx-auto" style="margin-bottom: 100px">
 
-	
-	{{ form_end(formTrick) }}
+	{{ form_row(formTrick.submit)}}
+
+</div>
 
 
-{% endblock %}
+{{ form_end(formTrick) }}</div>{% endblock %}

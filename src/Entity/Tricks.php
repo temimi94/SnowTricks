@@ -33,7 +33,7 @@ class Tricks
         maxMessage: 'Votre titre ne peut pas contenir plus de 255 caractères',
     )]
     #[ORM\Column(length: 255)]
-    private ?string $title = null;
+    private ?string $title ;
 
 
     #[ORM\Column(type: Types::TEXT)]
@@ -43,7 +43,7 @@ class Tricks
     )]
     private ?string $content = null;
 
-    #[ORM\ManyToMany(targetEntity: Category::class)]
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Category::class)]
     private $category;
 
 
@@ -62,6 +62,9 @@ class Tricks
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt;
 
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Comment::class, orphanRemoval: true)]
+    private Collection $comments;
+
 
 
     public function __construct()
@@ -69,6 +72,7 @@ class Tricks
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTimeImmutable();
         $this->category = new ArrayCollection();
+        $this->comments = new ArrayCollection();
     }
     
 
@@ -162,4 +166,35 @@ class Tricks
     {
         return $this->updatedAt;
     }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments->add($comment);
+            $comment->setTrick($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComment(Comment $comment): static
+    {
+        if ($this->comments->removeElement($comment)) {
+            // set the owning side to null (unless already changed)
+            if ($comment->getTrick() === $this) {
+                $comment->setTrick(null);
+            }
+        }
+
+        return $this;
+    }
+
 }

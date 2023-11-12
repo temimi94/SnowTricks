@@ -10,6 +10,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\UrlType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -20,7 +21,7 @@ class TrickType extends AbstractType
         $builder
             ->add('title', TextType::class, [
                 'attr' => [
-                    'class' => 'form-control',
+                    'class' => 'form-control ',
                 ],
                 'label' => 'Titre',
                 'label_attr' => [
@@ -41,28 +42,48 @@ class TrickType extends AbstractType
                 EntityType::class,
                 [
                     'class' => Category::class,
-                    'query_builder' => function (CategoryRepository $t) {
-                        return $t->createQueryBuilder('c')
-                        ->orderBy('c.name', 'ASC');
+                    'choice_label' => 'name',
+                    'placeholder' => 'choisir le groupe',
+                    'query_builder' => fn (CategoryRepository $t) =>
+                    $t->createQueryBuilder('c'),
 
-                    },
-                    'placeholder' => 'Choisir le groupe',
                     'label' => 'Groupe',
                     'label_attr' => [
-                        'class' => 'form-label mt-4'
+                        'class' => 'mr-sm-2 mt-4'
                     ],
 
-                    'choice_label' => 'name',
+
                     'multiple' => true
                 ]
             )
-            ->add('image')
-            ->add('video')
+            ->add(
+                'image',
+                UrlType::class,
+                [
+                    'attr' => [
+                        'class' => 'form-control'
+                    ],
+                    'label' => 'Image',
+                    'label_attr' => [
+                        'class' => 'form-label mt-4'
+                    ]
+                ]
+
+            )
+            ->add('video', UrlType::class, [
+                'attr' => [
+                    'class' => 'form-control'
+                ],
+                'label' => 'Vidéo',
+                'label_attr' => [
+                    'class' => 'form-label mt-4'
+                ]
+            ])
             ->add('submit', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary mt-4'
+                    'class' => 'btn btn-outline-secondary shadow mt-4 col-md-4'
                 ],
-                'label' => 'Créer une figure'
+                'label' => 'Enregistrer'
             ]);
     }
 

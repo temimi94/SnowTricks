@@ -1,21 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Connexion !{% endblock %}
+{% block title %}Connexion
+{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-<h4>Veuillez vous connecter pour acceder à votre espace !</h4>
-<form action="{{ path('app_security_login') }}" method="post">
-  <div class="form-group">
-    <label for="username">Nom d'utilisateur</label>
-    <input type="username" class="form-control" id="username" name="_username" placeholder= "nom d'utilisateur ">
-  </div>
-  <div class="form-group">
-    <label for="password">Mot de passe</label>
-    <input type="password" class="form-control" id="password" name="_password" placeholder="mot de passe">
-  </div>
-  <button type="submit" class="btn btn-primary mt-4 mb-4">Se connecter</button>
-</form>
-</div>
+	<div class="container mt-4">
+		{% for message in app.flashes('danger') %}
+			<div class="alert alert-danger col-md-6 mx-auto">
+				{{ message }}
+			</div>
+		{% endfor %}
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success col-md-6 mx-auto">
+				{{ message }}
+			</div>
+		{% endfor %}
+
+
+		<h4 style="text-align: center; margin-top: 50px">Veuillez vous connecter pour acceder à votre espace !</h4>
+
+
+		{% if error %}
+			<div class="alert alert-danger" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+		{% endif %}
+
+		<form class="form-group col-md-6 mx-auto" style="height : 300px; margin-top: 50px" action="{{ path('app_login') }}" method="post">
+			<div class="form-group">
+				<label for="username">E-mail</label>
+				<input type="email" class="form-control" id="username" name="_username" placeholder="nom d'utilisateur " value="{{ last_username }}">
+			</div>
+			<div class="form-group">
+				<label for="password">Mot de passe</label>
+				<input type="password" class="form-control" id="password" name="_password" placeholder="mot de passe">
+			</div>
+			<button type="submit" class="btn btn-outline-secondary shadow mt-4 mb-4 col-md-4">Se connecter</button>
+			<span>
+				<a href="{{ path('app_password')}}">Mot de passe oublié ?</a>
+			</span>
+		</form>
+
+	</div>
 
 {% endblock %}

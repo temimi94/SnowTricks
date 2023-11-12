@@ -3,10 +3,17 @@
 
  {% block body %} 
 
- <h4> Créer votre espace Snowboard </h4>
+ <h4 style="text-align: center; margin-top: 50px"> Créer votre espace Snowboard </h4>
 
   {{ form_start(form) }}
-  {{ form_widget(form) }}
+
+  <div class="form-group col-md-6 mx-auto">
+	{{ form_widget(form)}}
+  <div class='form-error'>
+		{{ form_errors(form) }}
+	</div>
+  </div>
+
    {{ form_end(form) }}
 
  {% endblock %}

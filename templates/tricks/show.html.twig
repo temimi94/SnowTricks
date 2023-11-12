@@ -1,25 +1,60 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}
+	{{ trick.title }}
+{% endblock %}
 {% block body %}
-	{% block title %}
-		{{ trick.title }}
-	{% endblock %}
-	<div
-		class="col-lg-9">
-		<!-- Post content-->
-		<article>
-			<figure class="mb-4"><img class="img-fluid rounded" src={{ trick.image}} width="250" height="200" alt="..."/></figure<sectionclass="mb-5">
-			<p class="fs-5 mb-4">{{ trick.content }}</p>
-			<div>
-				<ul>
-				{#  {% for category in category.element.name %}
-					<li>{{ trick.category }}</li>
-					 {% enfor %} #}
-					<li>{{ trick.createdAt | date('d/m/Y') }}
-						à
-						{{ trick.createdAt | date('H:i') }}</li>
-				</ul>
+
+	<div class="show-card " style="display: flex; flex-direction: row; flex-wrap: wrap; ">
+		<img src={{ trick.image}} alt={{ trick.image}} class="img-thumbnail shadow" style="width: 250px; height: 200px; margin: 10px;">
+		<div class="embed-responsive embed-responsive-16by9">
+			<iframe style="margin-top: 10px" width="250" height="200" src="https://www.youtube.com/embed/P-HnC7Ej9mw" title={{ trick.title}} frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+		</div>
+	</div>
+
+	<div class="content-card" style="margin-top: 50px">
+		<p class="text align ">{{ trick.content }}</p>
+		<p></p>
+	</div>
+
+	<div class="detail-card">
+		<ul class="list-group" style="width: 70%;margin-bottom: 50px; display:flex; flex-direction: row; justify-content: space-evenly; flex-wrap: wrap">
+			<li class="list-group-item">Publié le
+				{{ trick.createdAt | date('d/m/Y') }}
+				à
+				{{ trick.createdAt | date('H:i') }}</li>
+			<li class="list-group-item">Modifié le
+				{{ trick.updatedAt | date('d/m/Y') }}
+				à
+				{{ trick.updatedAt | date('H:i') }}</li>
+			<li class="list-group-item">category</li>
+		</ul>
+	</div>
+
+	<section>
+		<div class="card bg-light">
+		
+			<div
+				class="card-body">
+				{% for comment in trick.comments %}
+				<!-- Comment with nested comments-->
+				<div
+					class="d-flex mb-4">
+					<!-- Parent comment-->
+					<div class="flex-shrink-0"><img class="rounded-circle" src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/></div>
+					<div class="ms-3">
+						<div class="fw-bold">{{comment.author}}</div>
+						{{comment.content}}
+
+					</div>
+				</div>
+				{% endfor %}
+				{{ form_start(comment) }}
+				{{ form_row(comment.author, {'attr': {'placeholder': "Entrer votre nom"}})}}
+				{{ form_row(comment.content, {'attr': {'placeholder': "Entrer votre nom"}})}}
+				  <button  type="submit" class="btn btn-outline-secondary shadow mt-4 mb-4 ">Commenter</button>
+				 {{ form_end(comment) }}
 			</div>
 		</section>
-	</article>
-{% endblock %}
+
+
+	{% endblock %}

@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Tricks;
+use App\Entity\Comment;
+use App\Form\CommentType;
 use App\Form\TrickType;
 use App\Repository\TricksRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -17,9 +19,9 @@ class TricksController extends AbstractController
 {
 
 
- /** 
-  * Afficher toutes les figures
-  * */
+  /** 
+   * Afficher toutes les figures
+   * */
   #[Route('/', name: 'app_tricks')]
   public function index(TricksRepository $repo, PaginatorInterface $paginator, Request $request): Response
   {
@@ -36,9 +38,9 @@ class TricksController extends AbstractController
     ]);
   }
 
-/** 
-  * Créer une figure 
-  * */
+  /** 
+   * Créer une figure 
+   * */
   #[Route("/tricks/new", name: "app_tricks_new")]
   public function new(Request $request, EntityManagerInterface  $manager): Response
   {
@@ -50,6 +52,7 @@ class TricksController extends AbstractController
 
     if ($form->isSubmitted() && $form->isValid()) {
       $trick = $form->getData();
+      dd($trick);
       $manager->persist($trick);
       $manager->flush();
       $this->addFlash(
@@ -64,8 +67,8 @@ class TricksController extends AbstractController
   }
 
   /** 
-  * Modifier une figure 
-  * */
+   * Modifier une figure 
+   * */
   #[Route("tricks/edit/{id}", name: "app_tricks_update")]
   public function update(TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
   {
@@ -93,16 +96,30 @@ class TricksController extends AbstractController
 
 
   /** 
-  * Afficher une figure par son Id
-  * */
+   * Afficher une figure par son Id
+   * */
 
   #[Route('/tricks/{id}', name: 'app_tricks_show')]
-  public function show(TricksRepository $repo, $id): Response
+  public function show(TricksRepository $repo, $id,Tricks $trick, Request $request,  EntityManagerInterface $manager): Response
   {
-
     $trick = $repo->find($id);
+
+    $comment = new Comment();
+    $form = $this->createForm(CommentType::class, $comment);
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+      $comment->setCreatedAt(new \DateTime())
+      ->setTrick($trick);
+      $manager->persist($comment);
+      $manager->flush();
+
+      return $this->redirectToRoute('app_tricks_show', ['id' => $trick->getId()]);
+    }
+
+
     return $this->render('tricks/show.html.twig', [
-      'trick' => $trick
+      'trick' => $trick,
+      'comment' => $form->createView()
 
     ]);
   }
@@ -110,8 +127,8 @@ class TricksController extends AbstractController
 
 
   /** 
-  * Supprimer une figure 
-  * */
+   * Supprimer une figure 
+   * */
   #[Route('/tricks/delete/{id}', name: 'app_tricks_delete')]
   public function delete(EntityManagerInterface $manager, Tricks $trick): Response
   {

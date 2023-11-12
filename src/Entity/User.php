@@ -5,13 +5,14 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\EntityListeners(['App\EntityListener\UserListener'])]
-class User implements PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -31,16 +32,24 @@ class User implements PasswordAuthenticatedUserInterface
 
     #[Assert\NotBlank()]
     #[ORM\Column(length: 255)]
-    private ?string $username ;
+    private ?string $username;
 
+
+    #[Assert\NotNull()]
     #[ORM\Column(length: 255)]
-    private ?string $avatar = null;
+    private ?string $avatar;
+
+
+    #[Assert\NotNull()]
+    #[ORM\Column]
+    private ?bool $enabled;
 
     #[ORM\Column]
-    private ?bool $enabled = null;
-    
+    #[Assert\NotNull()]
+    private array $roles = [];
 
-   
+
+
     private ?string $reset_token = null;
 
     #[ORM\Column]
@@ -71,17 +80,17 @@ class User implements PasswordAuthenticatedUserInterface
      * 
      * 
      */
-     public function getUserIdentifier(): string
+    public function getUserIdentifier(): string
     {
         return (string) $this->email;
-    } 
+    }
 
 
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
     }
-    
+
 
     /**
      * @see PasswordAuthenticatedUserInterface
@@ -99,13 +108,24 @@ class User implements PasswordAuthenticatedUserInterface
     }
 
     /**
-     * UserInterface
+     * @see UserInterface
      */
-    public function eraseCredentials(): void
+    public function getRoles(): array
     {
-        // If you store any temporary, sensitive data on the user, clear it here
-        // $this->plainPassword = null;
-    } 
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
 
     public function getUsername(): ?string
     {
@@ -166,4 +186,13 @@ class User implements PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        // If you store any temporary, sensitive data on the user, clear it here
+        // $this->plainPassword = null;
+    }
+   
 }

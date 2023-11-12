@@ -19,22 +19,12 @@ class AuthType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-               /*  'constraints' => [
-                    new Assert\Email(
-                        message: 'E-mail non valide.'
-                    )
-                ], */
                 'label' => 'E-mail',
                 'label_attr' => [
                     'class' => 'form-label mt-4'
                 ],
             ])
             ->add('reset_token', PasswordType::class, [
-                /* 'constraints' => [
-                    new SecurityAssert\UserPassword(
-                        message: 'Votre mot de passe n\es pas valide'
-                    )
-                ], */
                 'label' => 'Mot de passe',
                 'label_attr' => [
                     'class' => 'form-label mt-4'
@@ -44,7 +34,7 @@ class AuthType extends AbstractType
                 'attr' => [
                     'class' => 'form-control',
                 ],
-                'label' => 'Nom d\utilisateur',
+                'label' => "Nom d'utilisateur",
                 'label_attr' => [
                     'class' => 'form-label mt-4'
                 ],
@@ -53,13 +43,14 @@ class AuthType extends AbstractType
                 ]
             ])
             ->add('avatar')
+           
             ->add('enabled')
             ->add('submit', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary mt-4'
+                    'class' => 'btn btn-outline-secondary shadow mt-4 mb-4 col-md-4 '
                 ],
                 'label' => 'Inscription'
-            ]);;
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
