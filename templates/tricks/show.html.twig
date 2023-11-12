@@ -5,7 +5,7 @@
 {% block body %}
 
 	<div class="show-card " style="display: flex; flex-direction: row; flex-wrap: wrap; ">
-		<img src={{ trick.image}} alt={{ trick.image}} class="img-thumbnail shadow" style="width: 250px; height: 200px; margin: 10px;">
+		<img src={{ trick.imageFile}} alt={{ trick.imageFile}} class="img-thumbnail shadow" style="width: 250px; height: 200px; margin: 10px;">
 		<div class="embed-responsive embed-responsive-16by9">
 			<iframe style="margin-top: 10px" width="250" height="200" src="https://www.youtube.com/embed/P-HnC7Ej9mw" title={{ trick.title}} frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 		</div>

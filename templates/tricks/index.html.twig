@@ -14,7 +14,7 @@
 
 		{% for trick in tricks %}
 			<div class="card shadow border-0 " style="width: 12rem; height: 13rem; margin: 10px;">
-				<img class="card-img-top" src={{ trick.image }} alt={{ trick.title}} style="height: 10rem;">
+				<img class="card-img-top" src={{ trick.imageFile }} alt={{ trick.title}} style="height: 10rem;">
 				<div class="card-body  d-flex justify-content-between">
 					<h5 class="card-title" style="font-size: 16px; color: black;">
 						<a class="text-decoration-none" style="color: black; font-family: 'EB Garamond', serif !important;" href="{{ path('app_tricks_show', {'id': trick.id})}}">{{ trick.title}}</a>
