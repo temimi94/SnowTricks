@@ -12,6 +12,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\Validator\Constraints as SecurityAssert;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class AuthType extends AbstractType
 {
@@ -42,8 +43,8 @@ class AuthType extends AbstractType
                     new Assert\NotBlank()
                 ]
             ])
+          
             ->add('avatar')
-           
             ->add('enabled')
             ->add('submit', SubmitType::class, [
                 'attr' => [

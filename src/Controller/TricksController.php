@@ -3,9 +3,12 @@
 namespace App\Controller;
 
 use App\Entity\Tricks;
+use App\Entity\Images;
 use App\Entity\Comment;
+use App\Entity\User;
 use App\Form\CommentType;
 use App\Form\TrickType;
+use App\Repository\CommentRepository;
 use App\Repository\TricksRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -13,7 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
-
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class TricksController extends AbstractController
 {
@@ -26,22 +30,23 @@ class TricksController extends AbstractController
   public function index(TricksRepository $repo, PaginatorInterface $paginator, Request $request): Response
   {
 
-    $tricks = $repo->findAll();
+    $tricks = $repo->findBy([], ['createdAt' => 'desc']);
     $tricks = $paginator->paginate(
       $repo->findAll(),
       $request->query->getInt('page', 1),
       15
     );
-    return $this->render('tricks/index.html.twig', [
-      'controller_name' => 'TricksController',
-      'tricks' => $tricks
-    ]);
+
+
+    return $this->render('tricks/index.html.twig', compact('tricks'));
   }
 
   /** 
    * Créer une figure 
    * */
   #[Route("/tricks/new", name: "app_tricks_new")]
+  #[Security("is_granted('ROLE_USER')")]
+
   public function new(Request $request, EntityManagerInterface  $manager): Response
   {
 
@@ -51,9 +56,39 @@ class TricksController extends AbstractController
 
     $form->handleRequest($request);
 
-    if ($form->isSubmitted() && $form->isValid()) {
-      $trick = $form->getData();
 
+
+    if ($form->isSubmitted() && $form->isValid()) {
+
+      $trick = $form->getData();
+      $trick->setUser($this->getUser());
+
+
+      $medias = $form->get('TriksImage')->getData();
+      foreach ($medias as $media) {
+        $fichier = md5(uniqid()) . '.' . $media->guessExtension();
+        try {
+          $media->move(
+            $this->getParameter('trick_img_directory'),
+            $fichier
+          );
+        } catch (FileException $e) {
+          //
+        }
+        $photo = new Images();
+        $photo->setImageName($fichier);
+        $trick->addImage($photo);
+      }
+      $trick->addImage($photo);
+
+
+      foreach ($trick->getUrl() as $videos) {
+        $videos->setTrick($trick);
+        $manager->persist($videos);
+      }
+
+      $trick->setUser($this->getUser());
+      dd($trick);
       $manager->persist($trick);
       $manager->flush();
       $this->addFlash(
@@ -71,8 +106,9 @@ class TricksController extends AbstractController
    * Modifier une figure 
    * */
   /* Modifier une figure */
+  #[Security("is_granted('ROLE_USER') and user === trick.getUser()")]
   #[Route("tricks/edit/{id}", name: "app_tricks_update")]
-  public function update(TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
+  public function update(Tricks $trick, TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
   {
     $trick = $repo->findOneBy(['id' => $id]);
     $form = $this->createForm(TrickType::class, $trick);
@@ -104,16 +140,19 @@ class TricksController extends AbstractController
    * */
 
   #[Route('/tricks/{id}', name: 'app_tricks_show')]
-  public function show(TricksRepository $repo, $id, Tricks $trick, Request $request,  EntityManagerInterface $manager): Response
+  public function show(Tricks $trick, Request $request,  EntityManagerInterface $manager, CommentRepository $repoComment): Response
   {
-    $trick = $repo->find($id);
+
 
     $comment = new Comment();
     $form = $this->createForm(CommentType::class, $comment);
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
-      $comment->setCreatedAt(new \DateTime())
-        ->setTrick($trick);
+      $user = $this->getUser();
+      $comment->setUser($user);
+      $comment->setTrick($trick);
+      $comment->setCreatedAt(new \DateTime());
+
       $manager->persist($comment);
       $manager->flush();
 
@@ -123,7 +162,10 @@ class TricksController extends AbstractController
 
     return $this->render('tricks/show.html.twig', [
       'trick' => $trick,
-      'comment' => $form->createView()
+      'comment' => $form->createView(),
+      'listComments' => $repoComment->findBy(['trick' => $trick])
+
+
 
     ]);
   }
@@ -134,6 +176,7 @@ class TricksController extends AbstractController
    * Supprimer une figure 
    * */
   #[Route('/tricks/delete/{id}', name: 'app_tricks_delete')]
+  #[Security("is_granted('ROLE_USER') and user === trick.getUser()")]
   public function delete(EntityManagerInterface $manager, Tricks $trick): Response
   {
     if (!$trick) {

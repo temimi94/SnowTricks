@@ -3,11 +3,14 @@
 namespace App\Form;
 
 use App\Entity\Categorie;
+use App\Form\ImageType;
 use App\Entity\Tricks;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -37,7 +40,7 @@ class TrickType extends AbstractType
                 'label' => 'Description',
                 'label_attr' => [
                     'class' => 'form-label mt-4'
-                ]
+                ],
             ])
             ->add(
                 'categorie',
@@ -50,21 +53,25 @@ class TrickType extends AbstractType
                 ]
             )
 
-            ->add('imageFile', VichImageType::class, [
-
-
+            ->add('TriksImage', FileType::class, [
+                'multiple' => true,
+                'label' => 'Ajouter une photo',
                 'label_attr' => [
                     'class' => 'form-label mt-4'
                 ],
-                'label' => 'Image',
-
+                'attr' => ['class' => 'form-control'],
+                'mapped' => false
             ])
-            ->add('video')
+            ->add('videos', CollectionType::class, [
+                'entry_type' => VideoType::class,
+                'allow_add' => true,
+                'allow_delete' => true
+            ])
             ->add('submit', SubmitType::class, [
                 'attr' => [
-                    'class' => 'btn btn-primary mt-4'
+                    'class' => 'btn btn-outline-secondary shadow mt-4 mb-4 col-md-2 '
                 ],
-                'label' => 'Créer une figure'
+                'label' => 'Enregistrer'
             ]);
     }
 
