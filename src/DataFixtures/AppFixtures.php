@@ -7,22 +7,26 @@ use App\Entity\Comment;
 use App\Entity\Images;
 use App\Entity\Tricks;
 use App\Entity\User;
+use App\Entity\Videos;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class AppFixtures extends Fixture
 {
     private Generator $faker;
     private UserPasswordHasherInterface $hashePassword;
+    private $slugger;
 
-    public function __construct(UserPasswordHasherInterface $hashePassword)
+    public function __construct(UserPasswordHasherInterface $hashePassword, SluggerInterface $slugger)
     {
         $this->faker = Factory::create('fr_FR');
         $this->hashePassword = $hashePassword;
+        $this->slugger = $slugger;
     }
     public function load(ObjectManager $manager): void
     {
@@ -58,18 +62,40 @@ class AppFixtures extends Fixture
         
 
     // tricks
+
+    
         for ($m = 0; $m <= mt_rand(4, 6); $m++) {
+          
             $trick = new Tricks();
+          
             $trick->setTitle($this->faker->word(6))
+            ->setSlug($this->slugger->slug($trick->getTitle()))
                 ->setContent($this->faker->paragraphs(5, true))
-                ->setVideo("https://youtu.be/mBB7CznvSPQ")
                 ->setCategorie($category)
                 ->setUser($user);
+
+           /*       // 3 Image by Trick
+            for ($k=1; $k<4; $k++)
+            {
+                $image = new Images();
+                $image->setImageName($this->faker->imageUrl())
+                      ->setTrick($trick);
+                
+                $manager->persist($image);
+            }
+                 */
+            // 1 to 2 Video by Trick
+            for ($l=0; $l<mt_rand(1, 2); $l++)
+            {
+                $video = new Videos();
+                $video->setUrl('https://www.youtube.com/watch?v=tHHxTHZwFUw')
+                      ->setTrick($trick);
+                
+                $manager->persist($video);
+            }
                 
             $manager->persist($trick);
         }
-    }
-
 
         $days = (new \DateTime())->diff($trick->getCreatedAt())->days;
 
@@ -84,6 +110,10 @@ class AppFixtures extends Fixture
            
         }
 
+    }
+
+
+      
      
 
         $manager->flush();

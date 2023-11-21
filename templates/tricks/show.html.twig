@@ -11,9 +11,24 @@
 		{% for image in trick.image %}
 			<img src="{{ vich_uploader_asset(image, 'imageFile') }}" alt="{{ trick.title }}" class="img-thumbnail shadow" style="width: 12rem; height: 12rem; margin: 10px;"/>
 		{% endfor %}
-		<div class="embed-responsive embed-responsive-16by9">
-			<iframe style="margin-top: 10px" width="200" height="180" src="https://www.youtube.com/embed/P-HnC7Ej9mw" title={{ trick.title}} frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-		</div>
+		  {% for video in trick.videos %}
+        <div class="trickVideo shadow" style="width: 12rem; height: 12rem; margin: 10px;">
+            <iframe id="video{{ video.id }}" width="100%" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <script>
+            var regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            var url = "{{ video.url }}";
+            var match = url.match(regExp);
+            if (match && match[2].length == 11) 
+            {
+                var id = match[2];
+                var embedlink = "http://www.youtube.com/embed/" + id;
+                var iframe = document.getElementById("video{{ video.id }}");
+                iframe.src = embedlink;
+            }
+        </script>
+    {% endfor %}
+    </div>
 	</div>
 
 	<div class="content-card" style="margin-top: 50px">

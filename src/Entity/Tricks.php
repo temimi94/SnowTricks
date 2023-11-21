@@ -9,6 +9,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 
 #[UniqueEntity('title')]
@@ -22,10 +23,17 @@ class Tricks
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
-
-
-
     private ?int $id = null;
+
+   
+    #[ORM\Column(length: 100)]
+    private ?string $title ;
+
+
+    #[ORM\Column(length: 100)]
+    #[Gedmo\Slug(fields: "title")]
+    private ?string $slug = null;
+
 
     #[Assert\Length(
         min: 5,
@@ -33,9 +41,7 @@ class Tricks
         minMessage: 'Votre titre doit comporter au moins 10 caractères',
         maxMessage: 'Votre titre ne peut pas contenir plus de 255 caractères',
     )]
-    #[ORM\Column(length: 255)]
-    private ?string $title ;
-
+   
 
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(
@@ -68,7 +74,7 @@ class Tricks
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Images::class, orphanRemoval: true, fetch: 'EAGER', cascade: ["persist", "remove"])]
     private Collection $image;
 
-    #[ORM\OneToMany(mappedBy: 'name', targetEntity: Video::class)]
+    #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Videos::class)]
     private Collection $videos;
 
     
@@ -80,6 +86,7 @@ class Tricks
         $this->comments = new ArrayCollection();
         $this->image = new ArrayCollection();
         $this->videos = new ArrayCollection();
+      
     }
     
 
@@ -92,6 +99,16 @@ class Tricks
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getSlug(): ?string
+    {
+        return $this->slug;
+    }
+    public function setSlug(string $slug): self
+    {
+        $this->slug = $slug;
+        return $this;
     }
 
     public function getTitle(): ?string
@@ -223,33 +240,35 @@ class Tricks
     }
 
     /**
-     * @return Collection<int, Video>
+     * @return Collection<int, Videos>
      */
     public function getVideos(): Collection
     {
         return $this->videos;
     }
 
-    public function addVideo(Video $video): static
+    public function addVideo(Videos $video): static
     {
         if (!$this->videos->contains($video)) {
             $this->videos->add($video);
-            $video->setName($this);
+            $video->setTrick($this);
         }
 
         return $this;
     }
 
-    public function removeVideo(Video $video): static
+    public function removeVideo(Videos $video): static
     {
         if ($this->videos->removeElement($video)) {
             // set the owning side to null (unless already changed)
-            if ($video->getName() === $this) {
-                $video->setName(null);
+            if ($video->getTrick() === $this) {
+                $video->setTrick(null);
             }
         }
 
         return $this;
     }
+
+    
 
 }

@@ -62,10 +62,11 @@ class TrickType extends AbstractType
                 'attr' => ['class' => 'form-control'],
                 'mapped' => false
             ])
-            ->add('videos', CollectionType::class, [
+            ->add('videos', CollectionType::class,  [
                 'entry_type' => VideoType::class,
                 'allow_add' => true,
                 'allow_delete' => true
+               
             ])
             ->add('submit', SubmitType::class, [
                 'attr' => [

@@ -49,12 +49,9 @@
 </div>
 <div class="form-group col-md-6 mx-auto mt-4">
 
-	{{ form_label(formTrick.videos)}}
-	{{ form_widget(formTrick.videos)}}
-	<div class='form-error'>
-		{{ form_errors(formTrick.videos) }}
+	{{ form_row(formTrick.videos)}}
 	</div>
-</div>
+	
 <div class="form-group col-md-6 mx-auto" style="margin-bottom: 100px">
 
 	{{ form_row(formTrick.submit)}}

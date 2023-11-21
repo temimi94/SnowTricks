@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Tricks;
 use App\Entity\Images;
+use App\Entity\Videos;
 use App\Entity\Comment;
 use App\Entity\User;
 use App\Form\CommentType;
@@ -30,7 +31,9 @@ class TricksController extends AbstractController
   public function index(TricksRepository $repo, PaginatorInterface $paginator, Request $request): Response
   {
 
-    $tricks = $repo->findBy([], ['createdAt' => 'desc']);
+   // Get 15 tricks from position 0
+   $tricks = $repo->findBy([], ['createdAt' => 'DESC'], 15, 0);
+
     $tricks = $paginator->paginate(
       $repo->findAll(),
       $request->query->getInt('page', 1),
@@ -56,8 +59,6 @@ class TricksController extends AbstractController
 
     $form->handleRequest($request);
 
-
-
     if ($form->isSubmitted() && $form->isValid()) {
 
       $trick = $form->getData();
@@ -82,13 +83,12 @@ class TricksController extends AbstractController
       $trick->addImage($photo);
 
 
-      foreach ($trick->getUrl() as $videos) {
-        $videos->setTrick($trick);
-        $manager->persist($videos);
+      foreach ($trick->getVideos() as $video) {
+        $video->setTrick($trick);
+        $manager->persist($video);
       }
-
       $trick->setUser($this->getUser());
-      dd($trick);
+      
       $manager->persist($trick);
       $manager->flush();
       $this->addFlash(
@@ -107,7 +107,7 @@ class TricksController extends AbstractController
    * */
   /* Modifier une figure */
   #[Security("is_granted('ROLE_USER') and user === trick.getUser()")]
-  #[Route("tricks/edit/{id}", name: "app_tricks_update")]
+  #[Route("tricks/edit/{slug}", name: "app_tricks_update")]
   public function update(Tricks $trick, TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
   {
     $trick = $repo->findOneBy(['id' => $id]);
@@ -139,7 +139,7 @@ class TricksController extends AbstractController
    * Afficher une figure par son Id
    * */
 
-  #[Route('/tricks/{id}', name: 'app_tricks_show')]
+  #[Route('/tricks/{slug}', name: 'app_tricks_show')]
   public function show(Tricks $trick, Request $request,  EntityManagerInterface $manager, CommentRepository $repoComment): Response
   {
 
@@ -156,7 +156,7 @@ class TricksController extends AbstractController
       $manager->persist($comment);
       $manager->flush();
 
-      return $this->redirectToRoute('app_tricks_show', ['id' => $trick->getId()]);
+      return $this->redirectToRoute('app_tricks_show', ['slug' => $trick->getSlug()]);
     }
 
 

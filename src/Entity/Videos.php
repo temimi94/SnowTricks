@@ -2,21 +2,19 @@
 
 namespace App\Entity;
 
-use App\Repository\VideoRepository;
+use App\Repository\VideosRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: VideoRepository::class)]
-class Video
+#[ORM\Entity(repositoryClass: VideosRepository::class)]
+class Videos
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $name;
+    #[ORM\Column(length: 255)]
+    private ?string $url = null;
 
     #[ORM\ManyToOne(inversedBy: 'videos')]
     private ?Tricks $trick = null;
@@ -26,14 +24,14 @@ class Video
         return $this->id;
     }
 
-    public function getName(): ?string
+    public function getUrl(): ?string
     {
-        return $this->name;
+        return $this->url;
     }
 
-    public function setName(string $name): self
+    public function setUrl(string $url): static
     {
-        $this->name = $name;
+        $this->url = $url;
 
         return $this;
     }
