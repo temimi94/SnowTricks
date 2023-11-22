@@ -33,6 +33,7 @@ class TrickType extends AbstractType
                     'class' => 'form-label mt-4'
                 ],
             ])
+
             ->add('content', TextareaType::class, [
                 'attr' => [
                     'class' => 'form-control'
@@ -65,7 +66,8 @@ class TrickType extends AbstractType
             ->add('videos', CollectionType::class,  [
                 'entry_type' => VideoType::class,
                 'allow_add' => true,
-                'allow_delete' => true
+                'allow_delete' => true,
+                'by_reference' => false
                
             ])
             ->add('submit', SubmitType::class, [

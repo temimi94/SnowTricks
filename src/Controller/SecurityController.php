@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Form\AuthType;
 use App\Form\ResetPasswordType;
 use App\Repository\UserRepository;
-use Symfony\Component\Mime\Email;
 use Doctrine\ORM\EntityManagerInterface as ORMEntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,10 +17,15 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Csrf\TokenGenerator\TokenGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+
 class SecurityController extends AbstractController
 {
+
+    public function __construct(private MailerInterface $mailer)
+    {
+    }
     #[Route('/inscription', name: 'app_security.signIn')]
-    public function signIn(Request $request, ORMEntityManagerInterface $manager)
+    public function signIn(Request $request, ORMEntityManagerInterface $manager) 
     {
 
         $user = new User();
@@ -31,19 +35,61 @@ class SecurityController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
+            // On génère un token et on l'enregistre
+            $user->setActivationToken(md5(uniqid()));
+
+            // do anything else you need here, like send an email
+            // On crée le message
+            $email = (new TemplatedEmail())
+            ->from('contact@snowtrick.fr')
+            ->to($user->getEmail())
+            ->subject('Activation du compte!')
+            ->htmlTemplate( 'email/activation.html.twig')
+           
+            ->context( ['token' => $user->getActivationToken()]);
+    
+
+        $this->mailer->send($email);
+       
+        
             $manager->persist($user);
             $manager->flush();
-            $this->addFlash(
-                'success',
-                'Votre compte à bien été crée !'
-            );
+           
 
-            return $this->redirectToRoute('app_login');
+           /*  return $this->redirectToRoute('app_login'); */
+            // On retourne à l'accueil
+      
         }
 
         return $this->render('security/signIn.html.twig', [
             'form' => $form->createView()
         ]);
+    }
+
+    /**
+     * @Route("/activation/{token}", name="activation")
+     */
+    public function activation($token, UserRepository $usersrepo, ORMEntityManagerInterface $manager)
+    {
+        // On recherche si un utilisateur avec ce token existe dans la base de données
+        $user = $usersrepo->findOneBy(['activation_token' => $token]);
+
+        // Si aucun utilisateur n'est associé à ce token
+        if (!$user) {
+            // On renvoie une erreur 404
+            throw $this->createNotFoundException('Cet utilisateur n\'existe pas');
+        }
+
+        // On supprime le token
+        $user->setActivationToken(null);
+       $manager->persist($user);
+      $manager->flush();
+
+        // On génère un message
+        $this->addFlash('success', 'Utilisateur activé avec succès, Veuillez vous connecter');
+
+        // On retourne à l'accueil
+        return $this->redirectToRoute('app_login');
     }
 
 
@@ -64,21 +110,19 @@ class SecurityController extends AbstractController
         throw new \Exception();
     }
 
-
-    #[Route('/recuperation/motdepasse', name: 'app_password', methods: ['GET', 'POST'])]
+ #[Route('/recuperation/motdepasse', name: 'app_password', methods: ['GET', 'POST'])]
     public function resetPassword(
         Request $request,
         UserRepository $repo,
         TokenGeneratorInterface $tokengenerate,
         ORMEntityManagerInterface $manager,
         UrlGeneratorInterface $urlGenerate,
-        MailerInterface $mailer
     ): Response {
 
-        $form = $this->createForm(ResetPasswordType::class);
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $user = $repo->findOneByEmail($form->get('email')->getData());
+        $formPassword = $this->createForm(ResetPasswordType::class);
+        $formPassword->handleRequest($request);
+        if ($formPassword->isSubmitted() && $formPassword->isValid()) {
+            $user = $repo->findOneByEmail($formPassword->get('email')->getData());
 
             //verification user existant
             if ($user) {
@@ -99,41 +143,42 @@ class SecurityController extends AbstractController
                 $email = (new TemplatedEmail())
                     ->from('rogaya086@gmail.com')
                     ->to($user->getEmail())
-                    ->subject('Réinitialisation de votre mot de passe')   
+                    ->subject('Réinitialisation de votre mot de passe')
                     ->htmlTemplate('/email/reset.html.twig')
-                    ->context([
-                        'url' => $url
-                    ]);
+                    ->context($content);
+    
+                $this->mailer->send($email);
 
-
-                $mailer->send($email);
-              
-
-               
                 $this->addFlash(
                     'success',
                     'Email envoyé avec succès'
                 );
-                return $this->redirectToRoute('app_login');
             }
             $this->addFlash(
                 'danger',
                 'un problème est survenu!'
             );
-            return $this->redirectToRoute('app_login');
+           
         }
+
         return $this->render(
             'security/resetPassword.html.twig',
             [
-                'form' => $form->createView()
+                'form' => $formPassword->createView()
             ]
         );
     }
 
     #[Route('/oubli/pass/{token)', name: 'app_reset')]
-    public function reset(): Response
+    public function reset(Request $request): Response
     {
+        $formPassword = $this->createForm(ResetPasswordType::class);
+        $formPassword->handleRequest($request);
         return $this->render(
-            'security/resetPassword.html.twig');
+        'security/resetPassword.html.twig',
+        [
+            'form' => $formPassword->createView()
+        ]
+    );
     }
 }

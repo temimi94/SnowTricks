@@ -30,7 +30,7 @@ class Tricks
     private ?string $title ;
 
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, nullable: true)]
     #[Gedmo\Slug(fields: "title")]
     private ?string $slug = null;
 

@@ -65,6 +65,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Comment::class, orphanRemoval: true, fetch: "EAGER")]
     private Collection $comments;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $activation_token = null;
+
 
     public function getId(): ?int
     {
@@ -265,6 +268,18 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
                 $comment->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getActivationToken(): ?string
+    {
+        return $this->activation_token;
+    }
+
+    public function setActivationToken(?string $activation_token): static
+    {
+        $this->activation_token = $activation_token;
 
         return $this;
     }
