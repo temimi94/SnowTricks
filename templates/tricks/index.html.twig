@@ -1,7 +1,32 @@
 {% extends 'base.html.twig' %}
-
+{% block header %}
+	<!-- Header-->
+	<header>
+		<div class="container px-5">
+			<div class="row gx-5 align-items-center justify-content-center">
+				<div class="col-lg-8 col-xl-7 col-xxl-6">
+					{% if app.user %}
+						<div class="my-5 text-center text-xl-start">
+							<h1 class="text-white font-weight-bold" >
+								{% block title %}
+									Bienvenue
+									{{ app.user.username }}
+									, Vivez le frisson du snowboard
+								{% endblock %}
+							</h1>
+						{% else %}
+							<h1 class="text-white font-weight-bold">
+								Bienvenue , Vivez le frisson du snowboard
+							</h1>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+		</div>
+	</header>
+{% endblock %}
 {% block body %}
-	<a href="#" class="btn rounded-circle d-flex" style="justify-content: center; align-items: center;  cursor: pointer; width: 100px; height: 100px; position: fixed; right: -30px; bottom: 80px;">
+	<a href="#" class="btn rounded-circle d-flex" style="">
 		<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Feather-arrows-arrow-up.svg/2048px-Feather-arrows-arrow-up.svg.png" style="width: 25px;" class="icon"/>
 	</a>
 	{% for message in app.flashes('success') %}
@@ -9,9 +34,11 @@
 			{{ message }}
 		</div>
 	{% endfor %}
-	<div class="container" style="display: flex; flex-direction: row; flex-wrap: wrap; margin: 40px 0px; ">
+
+	<div class="container-trick" >
+
 		{% for trick in tricks %}
-			<div class="card shadow border-0 " style="width: 12rem; height: 13rem; margin: 10px;">
+			<div class="card shadow border-0 " style="">
 				{% set firstImageDisplayed = false %}
 				{% if trick.image|length > 0 %}
 					{% for image in trick.image %}

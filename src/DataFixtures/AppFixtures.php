@@ -49,7 +49,7 @@ class AppFixtures extends Fixture
 
 
         //category
-        $groupTrick = new ArrayCollection(['La manière de rider', 'Les grabs', 'Les rotations', 'Les flips', 'Les rotations désaxées', 'Les slides', 'Les one foot tricks', 'Old school']);
+       /*  $groupTrick = new ArrayCollection(['La manière de rider', 'Les grabs', 'Les rotations', 'Les flips', 'Les rotations désaxées', 'Les slides', 'Les one foot tricks', 'Old school']);
         $filteredCollection = $groupTrick->filter(function($element) {
             return $element;
         });
@@ -60,7 +60,7 @@ class AppFixtures extends Fixture
             $category->setTitle($title);
             $manager->persist($category);
         
-
+ */
     // tricks
 
     
@@ -74,16 +74,7 @@ class AppFixtures extends Fixture
                 ->setCategorie($category)
                 ->setUser($user);
 
-           /*       // 3 Image by Trick
-            for ($k=1; $k<4; $k++)
-            {
-                $image = new Images();
-                $image->setImageName($this->faker->imageUrl())
-                      ->setTrick($trick);
-                
-                $manager->persist($image);
-            }
-                 */
+          
             // 1 to 2 Video by Trick
             for ($l=0; $l<mt_rand(1, 2); $l++)
             {
@@ -95,7 +86,7 @@ class AppFixtures extends Fixture
             }
                 
             $manager->persist($trick);
-        }
+        
 
         $days = (new \DateTime())->diff($trick->getCreatedAt())->days;
 
@@ -118,4 +109,5 @@ class AppFixtures extends Fixture
 
         $manager->flush();
     }
+
 }

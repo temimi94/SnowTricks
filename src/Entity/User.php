@@ -10,10 +10,18 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\HttpFoundation\File\File;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
-#[UniqueEntity('email')]
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\EntityListeners(['App\EntityListener\UserListener'])]
+#[Vich\Uploadable]
+#[UniqueEntity(
+    fields: ['username'], message: 'Cet username existe déjà.',
+)]
+#[UniqueEntity(
+    fields: ['email'], message: 'Cet email existe déjà.',
+)]
 class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
@@ -37,18 +45,21 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     private ?string $username;
 
 
-    #[Assert\NotNull()]
-    #[ORM\Column(length: 255)]
-    private ?string $avatar;
+    // NOTE: This is not a mapped field of entity metadata, just a simple property.
+    #[Vich\UploadableField(mapping: 'tricks_images', fileNameProperty: 'imageName')]
+    private $imageFile = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $imageName = null;
 
 
-    #[Assert\NotNull()]
-    #[ORM\Column]
+    
+    #[ORM\Column(nullable: true)]
     private ?bool $enabled;
 
     #[ORM\Column]
     #[Assert\NotNull()]
-    private array $roles = [];
+    private array $roles = ['ROLE_USER'];
 
 
 
@@ -57,6 +68,9 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column]
     #[Assert\NotNull()]
     private ?\DateTimeImmutable $createdAt = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Tricks::class, orphanRemoval: true)]
@@ -186,17 +200,33 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
         return $this;
     }
 
-    public function getAvatar(): ?string
+    public function setImageFile(?File $imageFile = null): void
     {
-        return $this->avatar;
+        $this->imageFile = $imageFile;
+
+        if (null !== $imageFile) {
+            // It is required that at least one field changes if you are using doctrine
+            // otherwise the event listeners won't be called and the file is lost
+            $this->updatedAt = new \DateTimeImmutable();
+        }
     }
 
-    public function setAvatar(string $avatar): static
+    public function getImageFile(): ?File
     {
-        $this->avatar = $avatar;
-
-        return $this;
+        return $this->imageFile;
     }
+
+    public function setImageName(?string $imageName): void
+    {
+        $this->imageName = $imageName;
+    }
+
+    public function getImageName(): ?string
+    {
+        return $this->imageName;
+    }
+
+
 
     public function isEnabled(): ?bool
     {

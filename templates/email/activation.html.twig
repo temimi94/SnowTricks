@@ -1,4 +1,4 @@
-<?php
-<h1>Activation de votre compte</p>
-<p>Vous avez créé un compte sur notre site, veuillez cliquer sur le lien ci-dessous pour l'activer</p>
-<p><a href="{{ absolute_url(path('activation', {'token': token})) }}">Activer mon compte</a></p>
+
+ <p>Bonjour, vous vous êtes inscrit sur SnowTricks avec succès !<br>
+    Pour valider votre compte, veuillez valider votre email en cliquant sur le lien ci-dessous :<br>
+<p><a href="{{url('activation', {'token': token}) }}">Activer mon compte</a></p>

@@ -100,6 +100,31 @@ body {
   font-family: 'EB Garamond', serif !important;
 }
 
+header {
+  background: linear-gradient(to bottom, rgba(92, 77, 66, 0.8) 0%, rgba(92, 77, 66, 0.8) 100%), url(https://blog.snowleader.com/wp-content/uploads/2020/10/header-top-boots-snowboard-1110x740.jpg);
+	background-position: center;
+	background-repeat: no-repeat;
+	background-attachment: scroll;
+	background-size: cover;
+	height: 500px;
+}
+
+.text-white  {
+  font-size: 3rem; margin-top: 35%
+}
+
+.rounded-circle {
+  justify-content: center; align-items: center;  cursor: pointer; width: 100px; height: 100px; position: fixed; right: -30px; bottom: 80px;
+}
+
+.container-trick {
+  display: flex; flex-direction: row; flex-wrap: wrap; margin: 40px 0px;
+}
+
+.card {
+  width: 12rem; height: 13rem; margin: 10px;
+}
+
 body {
   margin: 0;
   font-family: 'EB Garamond', serif !important ;

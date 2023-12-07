@@ -1,19 +1,26 @@
- {% extends 'base.html.twig' %}
- {% block title %}Inscription !{% endblock %}
+{% extends 'base.html.twig' %}
+{% block title %}Inscription !
+{% endblock %}
 
- {% block body %} 
+{% block body %}
+	<h4 style="text-align: center; margin-top: 50px">
+		Inscription</h4>
+	<div class="mx-auto " style="text-align: center; margin: 50px;">
+		{{ form_start(form) }}
 
- <h4 style="text-align: center; margin-top: 50px"> Créer votre espace Snowboard </h4>
+		<div class="form-group col-md-4 mx-auto shadow" style="border: solid 0.5px black; padding: 20px">
+			{{ form_widget(form)}}
+			<div class='form-error'>
+				{{ form_errors(form) }}
+			</div>
+			<span>
+				<a href="{{ path('app_login')}}">Vous avez déja un compte ?</a>
+			</span>
+		</div>
 
-  {{ form_start(form) }}
 
-  <div class="form-group col-md-6 mx-auto">
-	{{ form_widget(form)}}
-  <div class='form-error'>
-		{{ form_errors(form) }}
+		{{ form_end(form) }}
+
 	</div>
-  </div>
 
-   {{ form_end(form) }}
-
- {% endblock %}
+{% endblock %}

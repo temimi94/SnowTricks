@@ -35,14 +35,6 @@ class Tricks
     private ?string $slug = null;
 
 
-    #[Assert\Length(
-        min: 5,
-        max: 255,
-        minMessage: 'Votre titre doit comporter au moins 10 caractères',
-        maxMessage: 'Votre titre ne peut pas contenir plus de 255 caractères',
-    )]
-   
-
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\Length(
         min: 20,
@@ -147,6 +139,11 @@ class Tricks
         return $this;
     }
     public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+     public function setUpdatedAt(): ?\DateTimeImmutable
     {
         return $this->updatedAt;
     }

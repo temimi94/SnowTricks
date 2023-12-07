@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Categorie;
 use App\Entity\Tricks;
 use App\Entity\Images;
 use App\Entity\Videos;
@@ -19,10 +20,19 @@ use Symfony\Component\Routing\Annotation\Route;
 use Knp\Component\Pager\PaginatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Symfony\Component\HttpFoundation\File\Exception\FileException;
+use Cocur\Slugify\Slugify;
+use Doctrine\Common\Collections\ArrayCollection;
 
 class TricksController extends AbstractController
 {
 
+  public static function slugify(string $string): string
+  {
+    $slug = preg_replace('/\s+/', '-', mb_strtolower(trim($string), 'UTF-8'));
+    $slug = preg_replace('/[^a-z0-9-]/', '', $slug);
+
+    return $slug;
+  }
 
   /** 
    * Afficher toutes les figures
@@ -31,15 +41,14 @@ class TricksController extends AbstractController
   public function index(TricksRepository $repo, PaginatorInterface $paginator, Request $request): Response
   {
 
-   // Get 15 tricks from position 0
-   $tricks = $repo->findBy([], ['createdAt' => 'DESC'], 15, 0);
+    // Get 15 tricks from position 0
+    $tricks = $repo->findBy([], ['createdAt' => 'DESC'], 15, 0);
 
     $tricks = $paginator->paginate(
       $repo->findAll(),
       $request->query->getInt('page', 1),
       15
     );
-
 
     return $this->render('tricks/index.html.twig', compact('tricks'));
   }
@@ -63,7 +72,11 @@ class TricksController extends AbstractController
 
       $trick = $form->getData();
       $trick->setUser($this->getUser());
+      $title = $trick->getTitle();
 
+      $slugify = new Slugify();
+      $slug = $slugify->slugify($title);
+      $trick->setSlug($slug);
 
       $medias = $form->get('TriksImage')->getData();
       foreach ($medias as $media) {
@@ -88,7 +101,19 @@ class TricksController extends AbstractController
         $manager->persist($video);
       }
       $trick->setUser($this->getUser());
+
+      $groupTrick = new ArrayCollection(['La manière de rider', 'Les grabs', 'Les rotations', 'Les flips', 'Les rotations désaxées', 'Les slides', 'Les one foot tricks', 'Old school']);
+      $filteredCollection = $groupTrick->filter(function($element) {
+          return $element;
+      });
       
+      for ($i = 0; $i < count($filteredCollection); ++$i) {
+          $category = new Categorie();
+          $title  = $filteredCollection[$i];
+        
+      }
+      $trick->addCategory($category);
+
       $manager->persist($trick);
       $manager->flush();
       $this->addFlash(
@@ -106,17 +131,26 @@ class TricksController extends AbstractController
    * Modifier une figure 
    * */
   /* Modifier une figure */
-  #[Security("is_granted('ROLE_USER') and user === trick.getUser()")]
+  
   #[Route("tricks/edit/{slug}", name: "app_tricks_update")]
-  public function update(Tricks $trick, TricksRepository $repo, int $id, Request $request, EntityManagerInterface $manager): Response
+  public function update(Tricks $trick, TricksRepository $repo, $slug, Request $request, EntityManagerInterface $manager): Response
   {
-    $trick = $repo->findOneBy(['id' => $id]);
+    $trick = $repo->findOneBy(['slug' => $slug]);
     $form = $this->createForm(TrickType::class, $trick);
 
     $form->handleRequest($request);
 
     if ($form->isSubmitted() && $form->isValid()) {
       $trick = $form->getData();
+
+      foreach($trick->getImage() as $image)
+      {
+          $image->setTrick($trick);
+          $manager->persist($image);
+      }
+
+      $trick->setUpdatedAt(new \DateTime());
+
       $manager->persist($trick);
       $manager->flush();
       $this->addFlash(
@@ -139,8 +173,8 @@ class TricksController extends AbstractController
    * Afficher une figure par son Id
    * */
 
-  #[Route('/tricks/{slug}', name: 'app_tricks_show')]
-  public function show(Tricks $trick, Request $request,  EntityManagerInterface $manager, CommentRepository $repoComment): Response
+  #[Route('/tricks/{slug}', name: 'app_tricks_show', methods: ['GET', 'POST'])]
+  public function show(Tricks $trick, Request $request, EntityManagerInterface $manager, CommentRepository $repoComment): Response
   {
 
 
@@ -172,26 +206,22 @@ class TricksController extends AbstractController
 
 
 
-  /** 
-   * Supprimer une figure 
-   * */
-  #[Route('/tricks/delete/{id}', name: 'app_tricks_delete')]
-  #[Security("is_granted('ROLE_USER') and user === trick.getUser()")]
-  public function delete(EntityManagerInterface $manager, Tricks $trick): Response
-  {
-    if (!$trick) {
-      $this->addFlash(
-        'success',
-        'La figue ,n/existe pas  !'
-      );
-    }
-    $manager->remove($trick);
-    $manager->flush();
+  /**SUPPRIMER UNE TRICK **/
+  #[Route('/tricks/delete/{slug}', name: 'app_tricks_delete')]
 
-    $this->addFlash(
-      'success',
-      'Votre figure à bien été supprimé avec succès !'
-    );
-    return $this->redirectToRoute('app_tricks');
+  public function delete(Tricks $trick,  EntityManagerInterface $manager): Response
+  {
+
+          $manager->remove($trick);
+          $manager->flush();
+
+          $this->addFlash(
+              'success',
+              'Suppression du tricks avec succés'
+          );
+
+          return $this->redirectToRoute('app_tricks');
+  
   }
+
 }

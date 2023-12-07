@@ -22,7 +22,7 @@ class Images
     private ?Tricks $trick = null;
 
     
-    #[ORM\Column(type: "string", length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image_name = null;
 
 
@@ -60,9 +60,9 @@ class Images
         return $this->image_name;
     }
 
-    public function setImageName(string $imageName): self
+    public function setImageName(string $image): self
     {
-        $this->image_name = $imageName;
+        $this->image_name = $image;
 
         return $this;
     }
